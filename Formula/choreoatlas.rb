@@ -6,6 +6,12 @@ class Choreoatlas < Formula
   version "0.2.0-ce.beta.1"
   license "Apache-2.0"
 
+  # Allow testers to install the latest main without bumping a release version
+  head do
+    url "https://github.com/choreoatlas2025/cli.git", branch: "main"
+    depends_on "go" => :build
+  end
+
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/choreoatlas2025/cli/releases/download/v0.2.0-ce.beta.1/choreoatlas-0.2.0-ce.beta.1-darwin-arm64.tar.gz"
@@ -27,16 +33,25 @@ class Choreoatlas < Formula
   end
 
   def install
-    bin.install "choreoatlas"
-    bin.install_symlink bin/"choreoatlas" => "ca"
-
-    pkgshare.install "examples"
-    pkgshare.install "README.md"
-    pkgshare.install "LICENSE"
+    if build.head?
+      # Build from source for --HEAD
+      system "go", "build", "-trimpath", "-o", "choreoatlas", "./cmd/choreoatlas"
+      bin.install "choreoatlas"
+      bin.install_symlink bin/"choreoatlas" => "ca"
+      pkgshare.install Dir["examples", "README.md", "LICENSE"] if File.exist?("examples")
+    else
+      # Install from release tarball
+      bin.install "choreoatlas"
+      bin.install_symlink bin/"choreoatlas" => "ca"
+      pkgshare.install "examples"
+      pkgshare.install "README.md"
+      pkgshare.install "LICENSE"
+    end
   end
 
   test do
     output = shell_output("#{bin}/choreoatlas version")
-    assert_match "choreoatlas v#{version}-ce", output
+    # For both stable and HEAD, assert CE edition marker (HEAD build version may differ)
+    assert_match "Edition: Community Edition (CE)", output
   end
 end
