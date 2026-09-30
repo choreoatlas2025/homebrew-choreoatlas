@@ -22,8 +22,8 @@ brew install choreoatlas2025/homebrew-choreoatlas/choreoatlas
 ## Documentation
 
 - [ChoreoAtlas CLI Repository](https://github.com/choreoatlas2025/cli)
-- [Quick Start Guide](https://choreoatlas.io/quickstart)
-- [Documentation](https://choreoatlas.io/docs)
+- [Quick Start Guide](https://cq365.eu.org/docs/guide/getting-started)
+- [Documentation](https://cq365.eu.org/docs/)
 
 ## License
 
